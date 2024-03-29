@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"maze/position"
+	"mazemazego/position"
 
 	"github.com/mattn/go-tty"
 )

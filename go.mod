@@ -1,4 +1,4 @@
-module maze
+module mazemazego
 
 go 1.22.1
 
