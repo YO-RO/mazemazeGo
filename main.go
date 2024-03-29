@@ -2,20 +2,13 @@ package main
 
 import "fmt"
 
-var mazeMap = [10][10]int{
-	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1},
-	{1, 0, 1, 0, 1, 0, 0, 0, 1, 1},
-	{1, 0, 1, 0, 1, 0, 1, 0, 1, 1},
-	{1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	{1, 0, 0, 1, 1, 1, 1, 0, 1, 1},
-	{1, 0, 1, 1, 0, 0, 0, 0, 0, 1},
-	{1, 0, 1, 0, 0, 1, 1, 1, 0, 1},
-	{1, 0, 1, 0, 0, 0, 0, 1, 0, 1},
-	{1, 0, 0, 1, 1, 1, 0, 1, 0, 1},
-	{1, 1, 1, 1, 1, 1, 0, 1, 1, 1},
-}
+type MapDetailType [10][10]int
 
-var entrancePos, exitPos = Position{1, 0}, Position{6, 9}
+type Maze struct {
+	MapDetail   MapDetailType
+	EntrancePos Position
+	ExitPos     Position
+}
 
 type Position struct {
 	X int
@@ -30,7 +23,7 @@ func (p Position) isAt(x, y int) bool {
 	return p.X == x && p.Y == y
 }
 
-func makeStageStr(mazeMap [10][10]int, player Position) string {
+func makeStageStr(mazeMap MapDetailType, player Position) string {
 	var mazeMapStr string
 	for y, rows := range mazeMap {
 		for x, mass := range rows {
@@ -49,7 +42,23 @@ func makeStageStr(mazeMap [10][10]int, player Position) string {
 }
 
 func main() {
-	player := entrancePos
-	stageStr := makeStageStr(mazeMap, player)
+	maze := Maze{
+		MapDetail: MapDetailType{
+			{1, 0, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 0, 1, 0, 1, 0, 0, 0, 1, 1},
+			{1, 0, 1, 0, 1, 0, 1, 0, 1, 1},
+			{1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
+			{1, 0, 0, 1, 1, 1, 1, 0, 1, 1},
+			{1, 0, 1, 1, 0, 0, 0, 0, 0, 1},
+			{1, 0, 1, 0, 0, 1, 1, 1, 0, 1},
+			{1, 0, 1, 0, 0, 0, 0, 1, 0, 1},
+			{1, 0, 0, 1, 1, 1, 0, 1, 0, 1},
+			{1, 1, 1, 1, 1, 1, 0, 1, 1, 1},
+		},
+		EntrancePos: Position{1, 0},
+		ExitPos:     Position{6, 9},
+	}
+	player := maze.EntrancePos
+	stageStr := makeStageStr(maze.MapDetail, player)
 	fmt.Print(stageStr)
 }
