@@ -1,0 +1,3 @@
+# mazemazeGo
+
+ただの迷路
