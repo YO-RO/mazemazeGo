@@ -90,6 +90,11 @@ func main() {
 		stageStr := makeStageStr(maze.MapDetail, player)
 		fmt.Println(stageStr)
 
+		if position.IsSame(player, maze.ExitPos) {
+			fmt.Println("Successful Escape!")
+			return
+		}
+
 		r, err := tty.ReadRune()
 		if err != nil {
 			log.Fatal(err)
