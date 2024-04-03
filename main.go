@@ -61,6 +61,10 @@ func movePlayer(mazeMap MapDetailType, player position.Pos, directionPos positio
 	return position.Pos{}, false
 }
 
+func escaped(player, exitPos position.Pos) bool {
+	return position.IsSame(player, exitPos)
+}
+
 func main() {
 	tty, err := tty.Open()
 	if err != nil {
@@ -90,7 +94,7 @@ func main() {
 		stageStr := makeStageStr(maze.MapDetail, player)
 		fmt.Println(stageStr)
 
-		if position.IsSame(player, maze.ExitPos) {
+		if escaped(player, maze.ExitPos) {
 			fmt.Println("Successful Escape!")
 			return
 		}
