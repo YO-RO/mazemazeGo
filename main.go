@@ -41,7 +41,7 @@ func isValidDirectionPos(directionPos position.Pos) bool {
 		position.IsSame(directionPos, position.Pos{X: 0, Y: -1})
 }
 
-func movePlayer(mazeMap MapDesignType, player position.Pos, directionPos position.Pos) (position.Pos, bool) {
+func movePlayer(player position.Pos, directionPos position.Pos, mazeMap MapDesignType) (position.Pos, bool) {
 	if !(isValidDirectionPos(directionPos)) {
 		return position.Pos{}, false
 	}
@@ -111,22 +111,22 @@ GAME_LOOP:
 			break GAME_LOOP
 		case 'w':
 			up := position.Pos{X: 0, Y: -1}
-			if p, ok := movePlayer(maze.Design, player, up); ok {
+			if p, ok := movePlayer(player, up, maze.Design); ok {
 				player = p
 			}
 		case 's':
 			down := position.Pos{X: 0, Y: 1}
-			if p, ok := movePlayer(maze.Design, player, down); ok {
+			if p, ok := movePlayer(player, down, maze.Design); ok {
 				player = p
 			}
 		case 'a':
 			left := position.Pos{X: -1, Y: 0}
-			if p, ok := movePlayer(maze.Design, player, left); ok {
+			if p, ok := movePlayer(player, left, maze.Design); ok {
 				player = p
 			}
 		case 'd':
 			right := position.Pos{X: 1, Y: 0}
-			if p, ok := movePlayer(maze.Design, player, right); ok {
+			if p, ok := movePlayer(player, right, maze.Design); ok {
 				player = p
 			}
 		}
