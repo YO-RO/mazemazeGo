@@ -90,6 +90,7 @@ func main() {
 	}
 	player := maze.EntrancePos
 
+GAME_LOOP:
 	for {
 		stageStr := makeStageStr(maze.Design, player)
 		fmt.Println(stageStr)
@@ -104,23 +105,30 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if r == 'x' {
-			break
-		}
-
-		var dirPos position.Pos
+		// handle input
 		switch r {
+		case 'x':
+			break GAME_LOOP
 		case 'w':
-			dirPos = position.Pos{X: 0, Y: -1}
+			up := position.Pos{X: 0, Y: -1}
+			if p, ok := movePlayer(maze.Design, player, up); ok {
+				player = p
+			}
 		case 's':
-			dirPos = position.Pos{X: 0, Y: 1}
+			down := position.Pos{X: 0, Y: 1}
+			if p, ok := movePlayer(maze.Design, player, down); ok {
+				player = p
+			}
 		case 'a':
-			dirPos = position.Pos{X: -1, Y: 0}
+			left := position.Pos{X: -1, Y: 0}
+			if p, ok := movePlayer(maze.Design, player, left); ok {
+				player = p
+			}
 		case 'd':
-			dirPos = position.Pos{X: 1, Y: 0}
-		}
-		if p, ok := movePlayer(maze.MapDetail, player, dirPos); ok {
-			player = p
+			right := position.Pos{X: 1, Y: 0}
+			if p, ok := movePlayer(maze.Design, player, right); ok {
+				player = p
+			}
 		}
 	}
 }
