@@ -8,17 +8,17 @@ import (
 	"github.com/mattn/go-tty"
 )
 
-type MapDetailType [10][10]int
+type MapDesignType [10][10]int
 
-type Maze struct {
-	MapDetail   MapDetailType
+type MazeDesign struct {
+	Design      MapDesignType
 	EntrancePos position.Pos
 	ExitPos     position.Pos
 }
 
-func makeStageStr(mazeMap MapDetailType, player position.Pos) string {
+func makeStageStr(design MapDesignType, player position.Pos) string {
 	var mazeMapStr string
-	for y, rows := range mazeMap {
+	for y, rows := range design {
 		for x, mass := range rows {
 			switch {
 			case player.X == x && player.Y == y:
@@ -41,7 +41,7 @@ func isValidDirectionPos(directionPos position.Pos) bool {
 		position.IsSame(directionPos, position.Pos{X: 0, Y: -1})
 }
 
-func movePlayer(mazeMap MapDetailType, player position.Pos, directionPos position.Pos) (position.Pos, bool) {
+func movePlayer(mazeMap MapDesignType, player position.Pos, directionPos position.Pos) (position.Pos, bool) {
 	if !(isValidDirectionPos(directionPos)) {
 		return position.Pos{}, false
 	}
@@ -72,8 +72,8 @@ func main() {
 	}
 	defer tty.Close()
 
-	maze := Maze{
-		MapDetail: MapDetailType{
+	maze := MazeDesign{
+		Design: MapDesignType{
 			{1, 0, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 0, 1, 0, 1, 0, 0, 0, 1, 1},
 			{1, 0, 1, 0, 1, 0, 1, 0, 1, 1},
@@ -91,7 +91,7 @@ func main() {
 	player := maze.EntrancePos
 
 	for {
-		stageStr := makeStageStr(maze.MapDetail, player)
+		stageStr := makeStageStr(maze.Design, player)
 		fmt.Println(stageStr)
 
 		if escaped(player, maze.ExitPos) {
