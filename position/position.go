@@ -9,6 +9,6 @@ func IsSame(p1, p2 Pos) bool {
 	return p1.X == p2.X && p1.Y == p2.Y
 }
 
-func Move(base, ex Pos) Pos {
-	return Pos{X: base.X + ex.X, Y: base.Y + ex.Y}
+func Add(p1, p2 Pos) Pos {
+	return Pos{X: p1.X + p2.X, Y: p1.Y + p2.Y}
 }
