@@ -22,11 +22,11 @@ func makeStageStr(design MapDesignType, player position.Pos) string {
 		for x, mass := range rows {
 			switch {
 			case player.X == x && player.Y == y:
-				mazeMapStr += "*"
+				mazeMapStr += "OO"
 			case mass == 1:
-				mazeMapStr += "O"
+				mazeMapStr += "##"
 			case mass == 0:
-				mazeMapStr += " "
+				mazeMapStr += "  "
 			}
 		}
 		mazeMapStr += "\n"
