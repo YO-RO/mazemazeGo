@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type PlayerMoveDirection int
 
@@ -12,8 +15,9 @@ const (
 )
 
 type MazeMazeGo struct {
-	Maze      MazeDesign
-	PlayerPos Pos
+	Maze                  MazeDesign
+	PlayerPos             Pos
+	IsShowingCorrectRoute bool
 }
 
 func NewMazeMazeGo(maze MazeDesign) MazeMazeGo {
@@ -70,21 +74,58 @@ func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
 	return false
 }
 
-func (m MazeMazeGo) String() string {
-	var mazeMapStr string
-	for y, rows := range m.Maze.Design {
-		for x, mass := range rows {
-			switch {
-			case m.PlayerPos.X == x && m.PlayerPos.Y == y:
-				mazeMapStr += "OO"
+func (m *MazeMazeGo) ToggleToShowCorrectRoute() {
+	m.IsShowingCorrectRoute = !m.IsShowingCorrectRoute
+}
 
-			case mass == 1:
-				mazeMapStr += "##"
-			case mass == 0:
-				mazeMapStr += "  "
+func (m MazeMazeGo) String() string {
+	var playAreaCells [10][10]string
+	// maze design
+	for y, rows := range m.Maze.Design {
+		for x, cell := range rows {
+			switch cell {
+			case 0:
+				playAreaCells[y][x] = "  "
+			case 1:
+				playAreaCells[y][x] = "##"
+			default:
+				playAreaCells[y][x] = "??"
 			}
 		}
-		mazeMapStr += "\n"
 	}
-	return mazeMapStr
+	// player
+	boldFront := func(s string) string {
+		return fmt.Sprintf("\033[1m%s\033[m", s)
+	}
+	playAreaCells[m.PlayerPos.Y][m.PlayerPos.X] = boldFront("OO")
+	// maze correct route
+	if m.IsShowingCorrectRoute {
+		for y, rows := range m.Maze.CorrectRoute {
+			for x, cell := range rows {
+				switch cell {
+				case 0: // do nothing
+				case 1:
+					frontStr := playAreaCells[y][x]
+					redBack := func(s string) string {
+						return fmt.Sprintf("\033[41m%s\033[m", s)
+					}
+					blackFront := func(s string) string {
+						return fmt.Sprintf("\033[30m%s\033[m", s)
+					}
+					playAreaCells[y][x] = redBack(blackFront(frontStr))
+				default:
+					playAreaCells[y][x] = "??"
+				}
+			}
+		}
+	}
+
+	var playAreaStr string
+	for _, rows := range playAreaCells {
+		for _, cell := range rows {
+			playAreaStr += cell
+		}
+		playAreaStr += "\n"
+	}
+	return playAreaStr
 }

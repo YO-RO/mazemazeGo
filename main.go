@@ -33,6 +33,8 @@ GAME_LOOP:
 		switch r {
 		case 'x':
 			break GAME_LOOP
+		case 'h':
+			mmg.ToggleToShowCorrectRoute()
 		case 'w':
 			mmg.MovePlayer(Up)
 		case 's':
