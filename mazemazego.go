@@ -2,7 +2,8 @@ package main
 
 import (
 	"errors"
-	"fmt"
+
+	"github.com/fatih/color"
 )
 
 type PlayerMoveDirection int
@@ -15,12 +16,12 @@ const (
 )
 
 type MazeMazeGo struct {
-	Maze                  MazeDesign
-	PlayerPos             Pos
-	IsShowingCorrectRoute bool
+	Maze                Maze
+	PlayerPos           Pos
+	DisplayCorrectRoute bool
 }
 
-func NewMazeMazeGo(maze MazeDesign) MazeMazeGo {
+func NewMazeMazeGo(maze Maze) MazeMazeGo {
 	m := MazeMazeGo{
 		Maze:      maze,
 		PlayerPos: maze.EntrancePos,
@@ -51,14 +52,14 @@ func dirToPos(dir PlayerMoveDirection) (pos Pos, err error) {
 func (m MazeMazeGo) detectCollisiton(newPlayerPos Pos) bool {
 	// 迷路から飛び出ていないか確認する
 	minX, minY := 0, 0
-	maxX, maxY := len(m.Maze.Design[0])-1, len(m.Maze.Design)-1
+	maxX, maxY := len(m.Maze.wall[0])-1, len(m.Maze.wall)-1
 	if newPlayerPos.X < minX || newPlayerPos.X > maxX ||
 		newPlayerPos.Y < minY || newPlayerPos.Y > maxY {
 		return true
 	}
 
 	// 壁と衝突していないか確認する
-	return m.Maze.Design[newPlayerPos.Y][newPlayerPos.X] == 1
+	return m.Maze.IsWall(newPlayerPos)
 }
 
 func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
@@ -74,58 +75,25 @@ func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
 	return false
 }
 
-func (m *MazeMazeGo) ToggleToShowCorrectRoute() {
-	m.IsShowingCorrectRoute = !m.IsShowingCorrectRoute
+func (m *MazeMazeGo) ToggleCorrectRouteDisplay() {
+	m.DisplayCorrectRoute = !m.DisplayCorrectRoute
 }
 
 func (m MazeMazeGo) String() string {
-	var playAreaCells [10][10]string
-	// maze design
-	for y, rows := range m.Maze.Design {
-		for x, cell := range rows {
-			switch cell {
-			case 0:
-				playAreaCells[y][x] = "  "
-			case 1:
-				playAreaCells[y][x] = "##"
-			default:
-				playAreaCells[y][x] = "??"
-			}
-		}
+	var tiles [10][10]Tile
+	if m.DisplayCorrectRoute {
+		tiles = m.Maze.TileLayoutWithCorrectRoute()
+	} else {
+		tiles = m.Maze.TileLayout()
 	}
-	// player
-	boldFront := func(s string) string {
-		return fmt.Sprintf("\033[1m%s\033[m", s)
-	}
-	playAreaCells[m.PlayerPos.Y][m.PlayerPos.X] = boldFront("OO")
-	// maze correct route
-	if m.IsShowingCorrectRoute {
-		for y, rows := range m.Maze.CorrectRoute {
-			for x, cell := range rows {
-				switch cell {
-				case 0: // do nothing
-				case 1:
-					frontStr := playAreaCells[y][x]
-					redBack := func(s string) string {
-						return fmt.Sprintf("\033[41m%s\033[m", s)
-					}
-					blackFront := func(s string) string {
-						return fmt.Sprintf("\033[30m%s\033[m", s)
-					}
-					playAreaCells[y][x] = redBack(blackFront(frontStr))
-				default:
-					playAreaCells[y][x] = "??"
-				}
-			}
-		}
-	}
+	tiles[m.PlayerPos.Y][m.PlayerPos.X] = tiles[m.PlayerPos.Y][m.PlayerPos.X].Overwrite(NewTile("OO", color.Bold))
 
-	var playAreaStr string
-	for _, rows := range playAreaCells {
-		for _, cell := range rows {
-			playAreaStr += cell
+	var str string
+	for _, rows := range tiles {
+		for _, tile := range rows {
+			str += tile.String()
 		}
-		playAreaStr += "\n"
+		str += "\n"
 	}
-	return playAreaStr
+	return str
 }

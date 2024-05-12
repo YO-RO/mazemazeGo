@@ -14,7 +14,7 @@ func main() {
 	}
 	defer tty.Close()
 
-	mmg := NewMazeMazeGo(GetMazeDesign())
+	mmg := NewMazeMazeGo(GetMaze())
 GAME_LOOP:
 	for {
 		fmt.Println(mmg)
@@ -34,7 +34,7 @@ GAME_LOOP:
 		case 'x':
 			break GAME_LOOP
 		case 'h':
-			mmg.ToggleToShowCorrectRoute()
+			mmg.ToggleCorrectRouteDisplay()
 		case 'w':
 			mmg.MovePlayer(Up)
 		case 's':
