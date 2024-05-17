@@ -1,52 +1,25 @@
 package main
 
 import (
-	"errors"
-
 	"github.com/fatih/color"
-)
-
-type PlayerMoveDirection int
-
-const (
-	Up PlayerMoveDirection = iota
-	Down
-	Left
-	Right
 )
 
 type MazeMazeGo struct {
 	Maze                Maze
-	PlayerPos           Pos
+	Player              Player
 	DisplayCorrectRoute bool
 }
 
 func NewMazeMazeGo(maze Maze) MazeMazeGo {
 	m := MazeMazeGo{
-		Maze:      maze,
-		PlayerPos: maze.EntrancePos,
+		Maze:   maze,
+		Player: NewPlayer(maze.EntrancePos, NewTile("OO", color.Bold)),
 	}
 	return m
 }
 
 func (m MazeMazeGo) IsEscaped() bool {
-	return IsSamePos(m.PlayerPos, m.Maze.ExitPos)
-}
-
-func dirToPos(dir PlayerMoveDirection) (pos Pos, err error) {
-	switch dir {
-	case Up:
-		pos = Pos{X: 0, Y: -1}
-	case Down:
-		pos = Pos{X: 0, Y: 1}
-	case Left:
-		pos = Pos{X: -1, Y: 0}
-	case Right:
-		pos = Pos{X: 1, Y: 0}
-	default:
-		err = errors.New("invalid dir (PlayerMoveDirection)")
-	}
-	return
+	return IsSamePos(m.Player.Pos, m.Maze.ExitPos)
 }
 
 func (m MazeMazeGo) detectCollisiton(newPlayerPos Pos) bool {
@@ -63,13 +36,9 @@ func (m MazeMazeGo) detectCollisiton(newPlayerPos Pos) bool {
 }
 
 func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
-	dirPos, err := dirToPos(moveDir)
-	if err != nil {
-		return false
-	}
-	newPlayerPos := AddPos(m.PlayerPos, dirPos)
-	if !m.detectCollisiton(newPlayerPos) {
-		m.PlayerPos = newPlayerPos
+	movedPlayer := m.Player.Moved(moveDir)
+	if !m.detectCollisiton(movedPlayer.Pos) {
+		m.Player = movedPlayer
 		return true
 	}
 	return false
@@ -86,7 +55,8 @@ func (m MazeMazeGo) String() string {
 	} else {
 		tiles = m.Maze.TileLayout()
 	}
-	tiles[m.PlayerPos.Y][m.PlayerPos.X] = tiles[m.PlayerPos.Y][m.PlayerPos.X].Overwrite(NewTile("OO", color.Bold))
+	tiles[m.Player.Pos.Y][m.Player.Pos.X] =
+		tiles[m.Player.Pos.Y][m.Player.Pos.X].Overwrite(m.Player.Tile)
 
 	var str string
 	for _, rows := range tiles {
