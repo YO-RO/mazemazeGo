@@ -49,16 +49,29 @@ func (m MazeMazeGo) String() string {
 	tiles[m.player.Pos.Y][m.player.Pos.X] =
 		tiles[m.player.Pos.Y][m.player.Pos.X].Overwrite(m.player.Tile)
 
+	if m.isEscaped() {
+		message := "Successful Escape!!!"
+		attr := []color.Attribute{color.BgCyan, color.FgBlack, color.Bold}
+		var messageTiles [10]Tile
+		for i := 0; i < 10; i++ {
+			// messageTiles[0] -> NewTile("Su", attr...)
+			// messageTiles[1] -> NewTile("cc", attr...)
+			// ...
+			messageTiles[i] = NewTile(message[i*2:i*2+2], attr...)
+		}
+
+		displayRowIdx := 4
+		for i, t := range tiles[displayRowIdx] {
+			tiles[displayRowIdx][i] = t.Overwrite(messageTiles[i])
+		}
+	}
+
 	var str string
 	for _, rows := range tiles {
 		for _, tile := range rows {
 			str += tile.String()
 		}
 		str += "\n"
-	}
-
-	if m.isEscaped() {
-		str += "\nSuccessful Escape!\n"
 	}
 	return str
 }
