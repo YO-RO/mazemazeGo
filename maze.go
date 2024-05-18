@@ -38,8 +38,18 @@ func (m Maze) TileLayoutWithCorrectRoute() [10][10]Tile {
 	return tileLayout
 }
 
-func (m Maze) IsWall(pos Pos) bool {
-	return m.wall[pos.Y][pos.X] == 2
+func (m Maze) IsRoad(pos Pos) bool {
+	// 迷路から飛び出ていないか確認する
+	// 入り口・出口で飛び出る可能性がある
+	minX, minY := 0, 0
+	maxX, maxY := len(m.wall[0])-1, len(m.wall)-1
+	if pos.X < minX || pos.X > maxX ||
+		pos.Y < minY || pos.Y > maxY {
+		return false
+	}
+
+	// 2 is wall tile
+	return m.wall[pos.Y][pos.X] != 2
 }
 
 func GetMaze() Maze {
