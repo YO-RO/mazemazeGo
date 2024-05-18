@@ -5,45 +5,49 @@ import (
 )
 
 type MazeMazeGo struct {
-	Maze                Maze
-	Player              Player
-	DisplayCorrectRoute bool
+	maze                Maze
+	player              Player
+	displayCorrectRoute bool
 }
 
 func NewMazeMazeGo(maze Maze) MazeMazeGo {
 	m := MazeMazeGo{
-		Maze:   maze,
-		Player: NewPlayer(maze.EntrancePos, NewTile("OO", color.Bold)),
+		maze:   maze,
+		player: NewPlayer(maze.EntrancePos, NewTile("OO", color.Bold)),
 	}
 	return m
 }
 
-func (m MazeMazeGo) IsEscaped() bool {
-	return IsSamePos(m.Player.Pos, m.Maze.ExitPos)
+func (m MazeMazeGo) GameIsEnd() bool {
+	return m.isEscaped()
+}
+
+func (m MazeMazeGo) isEscaped() bool {
+	return IsSamePos(m.player.Pos, m.maze.ExitPos)
 }
 
 func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
-	movedPlayer := m.Player.Moved(moveDir)
-	if !m.Maze.IsRoad(movedPlayer.Pos) {
+	movedPlayer := m.player.Moved(moveDir)
+	if !m.maze.IsRoad(movedPlayer.Pos) {
 		return false
 	}
-	m.Player = movedPlayer
+	m.player = movedPlayer
 	return true
 }
 
 func (m *MazeMazeGo) ToggleCorrectRouteDisplay() {
-	m.DisplayCorrectRoute = !m.DisplayCorrectRoute
+	m.displayCorrectRoute = !m.displayCorrectRoute
 }
 
 func (m MazeMazeGo) String() string {
 	var tiles [10][10]Tile
-	if m.DisplayCorrectRoute {
-		tiles = m.Maze.TileLayoutWithCorrectRoute()
+	if m.displayCorrectRoute {
+		tiles = m.maze.TileLayoutWithCorrectRoute()
 	} else {
-		tiles = m.Maze.TileLayout()
+		tiles = m.maze.TileLayout()
 	}
-	tiles[m.Player.Pos.Y][m.Player.Pos.X] =
-		tiles[m.Player.Pos.Y][m.Player.Pos.X].Overwrite(m.Player.Tile)
+	tiles[m.player.Pos.Y][m.player.Pos.X] =
+		tiles[m.player.Pos.Y][m.player.Pos.X].Overwrite(m.player.Tile)
 
 	var str string
 	for _, rows := range tiles {
@@ -51,6 +55,10 @@ func (m MazeMazeGo) String() string {
 			str += tile.String()
 		}
 		str += "\n"
+	}
+
+	if m.isEscaped() {
+		str += "\nSuccessful Escape!\n"
 	}
 	return str
 }

@@ -19,8 +19,7 @@ GAME_LOOP:
 	for {
 		fmt.Println(mmg)
 
-		if mmg.IsEscaped() {
-			fmt.Println("Successful Escape!")
+		if mmg.GameIsEnd() {
 			return
 		}
 
