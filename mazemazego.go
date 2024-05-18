@@ -1,6 +1,10 @@
 package main
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/fatih/color"
+)
 
 type PlayerMoveDirection int
 
@@ -12,11 +16,12 @@ const (
 )
 
 type MazeMazeGo struct {
-	Maze      MazeDesign
-	PlayerPos Pos
+	Maze                Maze
+	PlayerPos           Pos
+	DisplayCorrectRoute bool
 }
 
-func NewMazeMazeGo(maze MazeDesign) MazeMazeGo {
+func NewMazeMazeGo(maze Maze) MazeMazeGo {
 	m := MazeMazeGo{
 		Maze:      maze,
 		PlayerPos: maze.EntrancePos,
@@ -47,14 +52,14 @@ func dirToPos(dir PlayerMoveDirection) (pos Pos, err error) {
 func (m MazeMazeGo) detectCollisiton(newPlayerPos Pos) bool {
 	// 迷路から飛び出ていないか確認する
 	minX, minY := 0, 0
-	maxX, maxY := len(m.Maze.Design[0])-1, len(m.Maze.Design)-1
+	maxX, maxY := len(m.Maze.wall[0])-1, len(m.Maze.wall)-1
 	if newPlayerPos.X < minX || newPlayerPos.X > maxX ||
 		newPlayerPos.Y < minY || newPlayerPos.Y > maxY {
 		return true
 	}
 
 	// 壁と衝突していないか確認する
-	return m.Maze.Design[newPlayerPos.Y][newPlayerPos.X] == 1
+	return m.Maze.IsWall(newPlayerPos)
 }
 
 func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
@@ -70,21 +75,25 @@ func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
 	return false
 }
 
-func (m MazeMazeGo) String() string {
-	var mazeMapStr string
-	for y, rows := range m.Maze.Design {
-		for x, mass := range rows {
-			switch {
-			case m.PlayerPos.X == x && m.PlayerPos.Y == y:
-				mazeMapStr += "OO"
+func (m *MazeMazeGo) ToggleCorrectRouteDisplay() {
+	m.DisplayCorrectRoute = !m.DisplayCorrectRoute
+}
 
-			case mass == 1:
-				mazeMapStr += "##"
-			case mass == 0:
-				mazeMapStr += "  "
-			}
-		}
-		mazeMapStr += "\n"
+func (m MazeMazeGo) String() string {
+	var tiles [10][10]Tile
+	if m.DisplayCorrectRoute {
+		tiles = m.Maze.TileLayoutWithCorrectRoute()
+	} else {
+		tiles = m.Maze.TileLayout()
 	}
-	return mazeMapStr
+	tiles[m.PlayerPos.Y][m.PlayerPos.X] = tiles[m.PlayerPos.Y][m.PlayerPos.X].Overwrite(NewTile("OO", color.Bold))
+
+	var str string
+	for _, rows := range tiles {
+		for _, tile := range rows {
+			str += tile.String()
+		}
+		str += "\n"
+	}
+	return str
 }
