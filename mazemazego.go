@@ -22,26 +22,13 @@ func (m MazeMazeGo) IsEscaped() bool {
 	return IsSamePos(m.Player.Pos, m.Maze.ExitPos)
 }
 
-func (m MazeMazeGo) detectCollisiton(newPlayerPos Pos) bool {
-	// 迷路から飛び出ていないか確認する
-	minX, minY := 0, 0
-	maxX, maxY := len(m.Maze.wall[0])-1, len(m.Maze.wall)-1
-	if newPlayerPos.X < minX || newPlayerPos.X > maxX ||
-		newPlayerPos.Y < minY || newPlayerPos.Y > maxY {
-		return true
-	}
-
-	// 壁と衝突していないか確認する
-	return m.Maze.IsWall(newPlayerPos)
-}
-
 func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {
 	movedPlayer := m.Player.Moved(moveDir)
-	if !m.detectCollisiton(movedPlayer.Pos) {
-		m.Player = movedPlayer
-		return true
+	if !m.Maze.IsRoad(movedPlayer.Pos) {
+		return false
 	}
-	return false
+	m.Player = movedPlayer
+	return true
 }
 
 func (m *MazeMazeGo) ToggleCorrectRouteDisplay() {
