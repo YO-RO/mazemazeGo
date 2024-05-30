@@ -48,6 +48,6 @@ func (p Player) Moved(moveDir PlayerMoveDirection) Player {
 	if err != nil {
 		return p
 	}
-	p.Pos = AddPos(p.Pos, dirPos)
+	p.Pos.Add(dirPos)
 	return p
 }

@@ -23,7 +23,7 @@ func (m MazeMazeGo) GameIsEnd() bool {
 }
 
 func (m MazeMazeGo) isEscaped() bool {
-	return IsSamePos(m.player.Pos, m.maze.ExitPos)
+	return m.player.Pos.IsSame(m.maze.ExitPos)
 }
 
 func (m *MazeMazeGo) MovePlayer(moveDir PlayerMoveDirection) bool {

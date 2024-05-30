@@ -5,10 +5,11 @@ type Pos struct {
 	Y int
 }
 
-func IsSamePos(p1, p2 Pos) bool {
-	return p1.X == p2.X && p1.Y == p2.Y
+func (p Pos) IsSame(other Pos) bool {
+	return p.X == other.X && p.Y == other.Y
 }
 
-func AddPos(p1, p2 Pos) Pos {
-	return Pos{X: p1.X + p2.X, Y: p1.Y + p2.Y}
+func (p *Pos) Add(ex Pos) {
+	p.X += ex.X
+	p.Y += ex.Y
 }
