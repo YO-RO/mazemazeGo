@@ -13,7 +13,7 @@ type MazeMazeGo struct {
 func NewMazeMazeGo(maze Maze) MazeMazeGo {
 	m := MazeMazeGo{
 		maze:   maze,
-		player: NewPlayer(maze.EntrancePos, NewTile("OO", color.Bold)),
+		player: NewPlayer(maze.EntrancePos),
 	}
 	return m
 }

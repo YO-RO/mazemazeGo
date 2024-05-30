@@ -1,6 +1,10 @@
 package main
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/fatih/color"
+)
 
 type PlayerMoveDirection int
 
@@ -16,10 +20,10 @@ type Player struct {
 	Tile Tile
 }
 
-func NewPlayer(initPos Pos, tile Tile) Player {
+func NewPlayer(initPos Pos) Player {
 	return Player{
 		Pos:  initPos,
-		Tile: tile,
+		Tile: NewTile("OO", color.Bold),
 	}
 }
 
